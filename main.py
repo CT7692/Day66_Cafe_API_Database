@@ -2,9 +2,9 @@ from flask import Flask, jsonify, render_template, request, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
 from sqlalchemy import Integer, String, Boolean, select, desc
-from random import randint
 
 import os
+import secrets
 
 app = Flask(__name__)
 API_KEY: str = os.environ.get('API_KEY')
@@ -44,7 +44,7 @@ def home():
 @app.route("/random", methods=['GET'])
 def random_cafe():
     num_cafes = db.session.query(Cafe).count()
-    rand_id = randint(1, num_cafes)
+    rand_id = secrets.SystemRandom().randint(1, num_cafes)
     cafe = db.session.execute(select(Cafe).where(Cafe.id == rand_id))
     random_cafe = cafe.scalar()
     return jsonify(id=random_cafe.id,
